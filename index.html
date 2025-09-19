@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Search Results — Yoga Class Registration</title>
+<style>
+  :root{--bg:#0b0f14;--panel:#121821;--border:#1e293b;--text:#eff6ff;--muted:#c3d1e3;--accent:#22d3ee;--accent2:#34d399}
+  *{box-sizing:border-box} body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--text);margin:0}
+  .container{max-width:1100px;margin:0 auto;padding:24px}
+  header{position:sticky;top:0;background:rgba(11,15,20,.8);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:10}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 0}
+  .input{flex:1;min-width:260px;display:flex;align-items:center;gap:8px;background:#0f172a;border:1px solid #1f2937;border-radius:12px;padding:10px 12px}
+  .input input{flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:15px}
+  .btn{background:linear-gradient(180deg,var(--accent),#0ea5e9);color:#05202b;border:0;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+  .link-btn{background:transparent;border:1px solid #1f2e44;color:#b3c7de;padding:8px 12px;border-radius:10px;cursor:pointer}
+  .sortbar{display:flex;align-items:center;justify-content:space-between;color:#9fb6d1;margin:8px 0 4px}
+  select{background:#0f172a;color:#d6e2f0;border:1px solid #22334a;border-radius:8px;padding:8px 10px}
+  .grid{display:grid;grid-template-columns:280px 1fr;gap:18px;margin-top:10px}
+  .filters{align-self:start;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .filters h3{margin:6px 0 10px;font-size:13px;color:#9fb6d1;text-transform:uppercase;letter-spacing:.4px}
+  fieldset{border:0;margin:0 0 10px;padding:0} label{display:flex;gap:8px;align-items:center;margin:6px 0;color:var(--muted);font-size:14px}
+  .results{display:flex;flex-direction:column;gap:12px}
+  .card{display:grid;grid-template-columns:64px 1fr auto;gap:12px;background:linear-gradient(180deg,#0e1621,#0b1119);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .favicon{width:48px;height:48px;border-radius:10px;background:#0b2536;display:grid;place-items:center;color:#a8e6ff;font-weight:800}
+  .title{margin:0;font-size:18px}.title a{color:var(--text);text-decoration:none}.title a:hover{text-decoration:underline}
+  .url{color:#88a3bf;font-size:12px;word-break:break-all} .desc{color:var(--muted);margin:6px 0 0;line-height:1.45}
+  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .badge{font-size:12px;color:#a6b7cc;background:#0a2233;border:1px solid #133149;padding:5px 9px;border-radius:999px}
+  .actions{display:flex;gap:8px;align-items:center}.ghost{background:transparent;border:1px solid #1f2e44;color:#b3c7de;padding:8px 12px;border-radius:10px;cursor:pointer}
+  .primary{background:linear-gradient(180deg,var(--accent2),#10b981);border:0;color:#02160e;padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer}
+  .empty{text-align:center;padding:48px 16px;background:linear-gradient(180deg,#0d1622,#0b1119);border:1px solid var(--border);border-radius:16px}
+  .empty h3{margin:0 0 10px;font-size:18px}.empty p{margin:0 0 16px;color:#9fb6d1}.empty .suggest{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}.filters{order:2}}
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <form id="searchForm" class="bar" role="search" aria-label="Search yoga classes">
+      <div class="input"><span aria-hidden="true">🔎</span>
+        <input id="q" name="q" type="search" placeholder="Search yoga classes, styles, or studios..." />
+      </div>
+      <button class="btn" type="submit">Search</button>
+      <button id="clearBtn" class="link-btn" type="button">Clear</button>
+    </form>
+  </div>
+</header>
+
+<main class="container">
+  <div class="sortbar" aria-live="polite">
+    <div><strong id="count">0 results</strong> for <em id="queryEcho">“”</em></div>
+    <label>Sort
+      <select id="sort" aria-label="Sort results">
+        <option value="relevance">Relevance</option>
+        <option value="rating">Rating</option>
+        <option value="alpha">A → Z</option>
+      </select>
+    </label>
+  </div>
+
+  <section class="grid">
+    <aside class="filters" aria-label="Filters">
+      <form id="filters">
+        <h3>Location</h3>
+        <fieldset>
+          <label><input type="radio" name="loc" value="any" checked /> Any</label>
+          <label><input type="radio" name="loc" value="Online" /> Online</label>
+        </fieldset>
+
+        <h3>Price</h3>
+        <fieldset>
+          <label><input type="radio" name="price" value="" checked /> Any</label>
+          <label><input type="radio" name="price" value="$" /> $</label>
+          <label><input type="radio" name="price" value="$$" /> $$</label>
+          <label><input type="radio" name="price" value="$$$" /> $$$</label>
+        </fieldset>
+
+        <h3>Style</h3>
+        <fieldset>
+          <label><input type="checkbox" name="style" value="Vinyasa" /> Vinyasa</label>
+          <label><input type="checkbox" name="style" value="Hatha" /> Hatha</label>
+          <label><input type="checkbox" name="style" value="Power" /> Power</label>
+          <label><input type="checkbox" name="style" value="Restorative" /> Restorative</label>
+          <label><input type="checkbox" name="style" value="Yin" /> Yin</label>
+        </fieldset>
+      </form>
+    </aside>
+
+    <section class="results" id="results" aria-label="Search results"></section>
+  </section>
+</main>
+
+<script>
+  const RESULTS = [
+    { title:'Sunrise Yoga — Register for Vinyasa & Hatha', url:'https://sunriseyoga.example.com/register', desc:'Morning classes across Beginner to Intermediate levels. Drop-ins and monthly passes available.', site:'sunriseyoga.example', location:'Los Angeles, CA', price:'$', style:['Vinyasa','Hatha'], rating:4.8, start:'6:30 AM' },
+    { title:'FlowState Studio | Book a Class', url:'https://flowstate.example.org/classes/signup', desc:'Heated power yoga, Yin, and restorative flows. First week special for new members.', site:'flowstate.example', location:'Seattle, WA', price:'$$$', style:['Power','Yin','Restorative'], rating:4.6, start:'7:15 PM' },
+    { title:'Community Center Yoga Registration Portal', url:'https://cityparks.example.gov/yoga/register', desc:'Affordable city-run classes with certified instructors. Senior and student discounts.', site:'cityparks.example', location:'Austin, TX', price:'$', style:['Gentle','Chair'], rating:4.2, start:'10:00 AM' },
+    { title:'Skyline Yoga Collective — Sign Up', url:'https://skylineyoga.example.com/join', desc:'Rooftop sunrise sessions and weekend workshops. All levels welcome.', site:'skylineyoga.example', location:'New York, NY', price:'$$', style:['Vinyasa','Ashtanga'], rating:4.9, start:'5:45 AM' },
+    { title:'Om & Co. — Class Registration', url:'https://omandco.example.net/register', desc:'Prenatal yoga, kids classes, and mindfulness series with certified teachers.', site:'omandco.example', location:'Denver, CO', price:'$$', style:['Prenatal','Kids','Mindfulness'], rating:4.5, start:'3:30 PM' },
+    { title:'HotFlow — Book Hot Yoga near you', url:'https://hotflow.example.com/signup', desc:'Infrared-heated studio offering 60 and 90 minute power classes with music.', site:'hotflow.example', location:'Miami, FL', price:'$$$', style:['Hot','Power'], rating:4.7, start:'6:00 PM' },
+    { title:'Zenstream — Live Online Yoga Registration', url:'https://zenstream.example.app/register', desc:'Zoom-based live flows you can join from home. Global instructors, downloadable replays.', site:'zenstream.example', location:'Online', price:'$$', style:['Vinyasa','Yin','Restorative'], rating:4.4, start:'Varies' }
+  ];
+
+  const q = document.getElementById('q');
+  const resultsEl = document.getElementById('results');
+  const countEl = document.getElementById('count');
+  const sortEl = document.getElementById('sort');
+  const queryEcho = document.getElementById('queryEcho');
+  const filterForm = document.getElementById('filters');
+  const searchForm = document.getElementById('searchForm');
+  const clearBtn = document.getElementById('clearBtn');
+
+  let state = { query:'', maxPrice:'', styles:new Set(), location:'any', sort:'relevance' };
+
+  function setEcho(){ queryEcho.textContent = `“${state.query}”`; }
+  function match(r){
+    const txt = (r.title + ' ' + r.desc + ' ' + r.style.join(' ') + ' ' + r.location).toLowerCase();
+    const terms = (state.query||'').toLowerCase().trim().split(/\s+/).filter(Boolean);
+    if(terms.length && !terms.some(t => txt.includes(t))) return false;
+    if(state.maxPrice && r.price.length > state.maxPrice.length) return false;
+    if(state.styles.size && ![...state.styles].every(s => txt.includes(s.toLowerCase()))) return false;
+    if(state.location !== 'any' && r.location !== state.location) return false;
+    return true;
+  }
+  function sortList(list){
+    switch(state.sort){
+      case 'rating': return [...list].sort((a,b)=> b.rating - a.rating);
+      case 'alpha': return [...list].sort((a,b)=> a.title.localeCompare(b.title));
+      default: return list;
+    }
+  }
+  function faviconTxt(host){ return host.split('.')[0].slice(0,2).toUpperCase(); }
+  function card(r){
+    return `
+      <article class="card" aria-label="${r.title}">
+        <div class="favicon" aria-hidden="true">${faviconTxt(r.site)}</div>
+        <div>
+          <h2 class="title"><a href="${r.url}" target="_blank" rel="noopener">${r.title}</a></h2>
+          <div class="url">${r.url}</div>
+          <p class="desc">${r.desc}</p>
+          <div class="meta">
+            <span class="badge">${r.location}</span>
+            <span class="badge">${r.price} · Price tier</span>
+            <span class="badge">${r.style.join(' · ')}</span>
+            <span class="badge">⭐ ${r.rating.toFixed(1)}</span>
+            <span class="badge">Next start: ${r.start}</span>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="ghost" href="${r.url}" target="_blank" rel="noopener">Open</a>
+          <a class="primary" href="${r.url}" target="_blank" rel="noopener">Register</a>
+        </div>
+      </article>`;
+  }
+  function emptyState(){
+    return `
+      <div class="empty" role="status" aria-live="polite">
+        <h3>No results found</h3>
+        <p>Try broadening your search or clearing filters.</p>
+        <div class="suggest">
+          <button class="link-btn" type="button" onclick="clearAll()">Clear all filters</button>
+          <button class="link-btn" type="button" onclick="quickSearch('yoga')">Search “yoga”</button>
+          <button class="link-btn" type="button" onclick="quickSearch('vinyasa')">Search “vinyasa”</button>
+        </div>
+      </div>`;
+  }
+  function render(){
+    const filtered = sortList(RESULTS.filter(match));
+    countEl.textContent = `${filtered.length} result${filtered.length!==1?'s':''}`;
+    setEcho();
+    resultsEl.innerHTML = filtered.length ? filtered.map(card).join('') : emptyState();
+  }
+  function clearAll(){
+    state = { query:'', maxPrice:'', styles:new Set(), location:'any', sort:'relevance' };
+    q.value = ''; sortEl.value = 'relevance'; filterForm.reset(); render();
+  }
+  function quickSearch(term){ q.value = term; state.query = term; render(); }
+
+  // Events
+  searchForm.addEventListener('submit', e => { e.preventDefault(); state.query = q.value.trim(); render(); });
+  sortEl.addEventListener('change', () => { state.sort = sortEl.value; render(); });
+  clearBtn.addEventListener('click', clearAll);
+  filterForm.addEventListener('change', () => {
+    const fd = new FormData(filterForm);
+    state.location = fd.get('loc') || 'any';
+    state.maxPrice = fd.get('price') || '';
+    state.styles = new Set(fd.getAll('style'));
+    render();
+  });
+
+  // Initial render shows everything
+  render();
+</script>
+</body>
+</html>
